@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException, Request, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -25,9 +25,6 @@ def get_db():
 
 
 #========================= Rotas API ========================
-@app.get("/")
-def pagina_inicial():
-    return {"mensagem": "Funcionando"}
 
 @app.get("/api/{nome_pagina}")
 def ler_pagina(nome_pagina: str, db: Session = Depends(get_db)):
@@ -59,6 +56,17 @@ def atualizar_pagina(nome_pagina: str, pagina_update: schemas.PaginaUpdate, db: 
     return {"nome": pagina.nome, "conteudo": pagina.conteudo}
 
 #========================= Rotas PAGINAS ========================
+
+@app.get("/")
+def pagina_inicial(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="home.html"
+    )
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(status_code=204)
 
 @app.get("/{nome_pagina}")
 def renderiza_pagina(request: Request, nome_pagina: str):
