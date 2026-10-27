@@ -40,6 +40,15 @@ textarea.addEventListener('input', () => {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ conteudo: textarea.value })
-        }).then(() => console.log("Salvo automaticamente!"));
+        }).then(() => {
+            // Exibe a notificação na tela
+            const toast = document.getElementById('notificacao');
+            toast.classList.add('mostrar');
+            
+            // Esconde a notificação após 2 segundos
+            setTimeout(() => {
+                toast.classList.remove('mostrar');
+            }, 2000);
+        });
     }, 1000);
 });
