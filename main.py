@@ -26,7 +26,7 @@ def get_db():
 
 #========================= Rotas API ========================
 
-@app.get("/api/{nome_pagina}")
+@app.get("/api/{nome_pagina:path}")
 def ler_pagina(nome_pagina: str, db: Session = Depends(get_db)):
     #Tenta achar a página no banco de dados
     pagina = db.query(models.Pagina).filter(models.Pagina.nome == nome_pagina).first()
@@ -38,10 +38,20 @@ def ler_pagina(nome_pagina: str, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(pagina)
 
-    return {"nome": pagina.nome, "conteudo": pagina.conteudo}
+    #Busca subpaginas
+    termo_busca = f"{nome_pagina}/%"
+    subpaginas_db = db.query(models.Pagina).filter(models.Pagina.nome.like(termo_busca)).all()
+
+    #extrai nomes para enviar para o frontend
+    lista_subpaginas = [sub.nome for sub in subpaginas_db]
+
+    return {
+        "nome": pagina.nome,
+        "conteudo": pagina.conteudo,
+        "subpaginas": lista_subpaginas}
 
 
-@app.put("/api/{nome_pagina}")
+@app.put("/api/{nome_pagina:path}")
 def atualizar_pagina(nome_pagina: str, pagina_update: schemas.PaginaUpdate, db: Session = Depends(get_db)):
     pagina = db.query(models.Pagina).filter(models.Pagina.nome == nome_pagina).first()
 
@@ -68,7 +78,7 @@ def pagina_inicial(request: Request):
 def favicon():
     return Response(status_code=204)
 
-@app.get("/{nome_pagina}")
+@app.get("/{nome_pagina:path}")
 def renderiza_pagina(request: Request, nome_pagina: str):
     return templates.TemplateResponse(
         request=request,

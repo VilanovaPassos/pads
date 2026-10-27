@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ nome_pagina }}</title>
-    
+
     <!-- Conecta o CSS -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <!-- Guarda o nome da página no dataset para o JS poder ler -->
-    <textarea id="caixa-texto" data-pagina="{{ nome_pagina }}"></textarea>
 
-    <!-- Conecta o JavaScript -->
+<body>
+    <div class="layout">
+        <!-- O menu começa oculto e o JS decide se mostra -->
+        <aside id="sidebar" style="display: none;">
+            <h3>SubPads:</h3>
+            <ul id="lista-subpaginas">
+                <!-- O JavaScript adiciona os <li> aqui -->
+            </ul>
+        </aside>
+
+        <main>
+            <textarea id="caixa-texto" data-pagina="{{ nome_pagina }}"></textarea>
+        </main>
+    </div>
     <script src="/static/script.js"></script>
 </body>
+
 </html>
